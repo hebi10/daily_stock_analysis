@@ -9,7 +9,7 @@ import { ApiErrorAlert, Card, Badge, ConfirmDialog, EmptyState, InlineAlert } fr
 import { PortfolioSignalSummary } from '../components/decision-signals/DecisionSignalDisplay';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
 import { formatUiText } from '../i18n/uiText';
-import { PORTFOLIO_TEXT } from '../locales/featureText';
+import { PORTFOLIO_TEXT, getFeatureLanguage } from '../locales/featureText';
 import type { FxRefreshFeedback } from '../utils/portfolioFormat';
 import {
   buildFxRefreshFeedback,
@@ -160,7 +160,8 @@ async function loadPortfolioSignalLookup(lookup: PortfolioSignalLookup): Promise
 
 const PortfolioPage: React.FC = () => {
   const { language, t } = useUiLanguage();
-  const text = PORTFOLIO_TEXT[language];
+  const featureLanguage = getFeatureLanguage(language);
+  const text = PORTFOLIO_TEXT[featureLanguage];
   const decisionActionLabels = useMemo(() => buildDecisionActionLabelMap(t), [t]);
 
   // Set page title

@@ -6,7 +6,7 @@ import type { ParsedApiError } from '../api/error';
 import { getParsedApiError } from '../api/error';
 import { ApiErrorAlert, Card, Badge, EmptyState, Pagination, StatusDot, Tooltip } from '../components/common';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
-import { formatUiText, type UiLanguage } from '../i18n/uiText';
+import { formatUiText } from '../i18n/uiText';
 import {
   BACKTEST_DIRECTION_EXPECTED_LABELS,
   BACKTEST_MOVEMENT_LABELS,
@@ -15,6 +15,8 @@ import {
   BACKTEST_PHASE_LABELS,
   BACKTEST_STATUS_LABELS,
   BACKTEST_TEXT,
+  getFeatureLanguage,
+  type FeatureLanguage,
 } from '../locales/featureText';
 import type {
   BacktestResultItem,
@@ -29,7 +31,7 @@ const BACKTEST_INPUT_CLASS =
   'input-surface input-focus-glow h-11 w-full rounded-xl border bg-transparent px-4 text-sm transition-all focus:outline-none disabled:cursor-not-allowed disabled:opacity-60';
 const BACKTEST_COMPACT_INPUT_CLASS =
   'input-surface input-focus-glow h-10 rounded-xl border bg-transparent px-3 py-2 text-xs transition-all focus:outline-none disabled:cursor-not-allowed disabled:opacity-60';
-type BacktestText = (typeof BACKTEST_TEXT)[UiLanguage];
+type BacktestText = (typeof BACKTEST_TEXT)[FeatureLanguage];
 
 // ============ Helpers ============
 
@@ -38,7 +40,7 @@ function pct(value?: number | null): string {
   return `${value.toFixed(1)}%`;
 }
 
-function phaseLabel(row: BacktestResultItem, language: UiLanguage): string {
+function phaseLabel(row: BacktestResultItem, language: FeatureLanguage): string {
   const label = getMarketPhaseSummaryLabel(row.marketPhaseSummary, language);
   if (label) {
     return label
@@ -54,7 +56,7 @@ function labelFromMap(value: string | null | undefined, labels: Record<string, s
   return labels[value] ?? value;
 }
 
-function outcomeBadge(outcome: string | undefined, language: UiLanguage) {
+function outcomeBadge(outcome: string | undefined, language: FeatureLanguage) {
   const labels = BACKTEST_OUTCOME_LABELS[language];
   if (!outcome) return <Badge variant="default">--</Badge>;
   switch (outcome) {
@@ -69,7 +71,7 @@ function outcomeBadge(outcome: string | undefined, language: UiLanguage) {
   }
 }
 
-function statusBadge(status: string, language: UiLanguage) {
+function statusBadge(status: string, language: FeatureLanguage) {
   const labels = BACKTEST_STATUS_LABELS[language];
   switch (status) {
     case 'completed':
@@ -84,7 +86,7 @@ function statusBadge(status: string, language: UiLanguage) {
   }
 }
 
-function actualMovementBadge(movement: string | null | undefined, language: UiLanguage) {
+function actualMovementBadge(movement: string | null | undefined, language: FeatureLanguage) {
   const labels = BACKTEST_MOVEMENT_LABELS[language];
   switch (movement) {
     case 'up':
@@ -143,7 +145,7 @@ const MetricRow: React.FC<{ label: string; value: string; accent?: boolean }> = 
   </div>
 );
 
-function phaseBreakdownText(metrics: PerformanceMetrics, language: UiLanguage): string | null {
+function phaseBreakdownText(metrics: PerformanceMetrics, language: FeatureLanguage): string | null {
   const breakdown = metrics.diagnostics?.phaseBreakdown;
   if (!breakdown || typeof breakdown !== 'object') return null;
   const item = breakdown as Record<string, unknown>;
@@ -161,7 +163,7 @@ function phaseBreakdownText(metrics: PerformanceMetrics, language: UiLanguage): 
 
 // ============ Performance Card ============
 
-const PerformanceCard: React.FC<{ metrics: PerformanceMetrics; title: string; language: UiLanguage }> = ({ metrics, title, language }) => {
+const PerformanceCard: React.FC<{ metrics: PerformanceMetrics; title: string; language: FeatureLanguage }> = ({ metrics, title, language }) => {
   const text = BACKTEST_TEXT[language];
   const phaseText = phaseBreakdownText(metrics, language);
   return (
@@ -203,7 +205,7 @@ const PerformanceCard: React.FC<{ metrics: PerformanceMetrics; title: string; la
 
 // ============ Run Summary ============
 
-const RunSummary: React.FC<{ data: BacktestRunResponse; language: UiLanguage }> = ({ data, language }) => {
+const RunSummary: React.FC<{ data: BacktestRunResponse; language: FeatureLanguage }> = ({ data, language }) => {
   const text = BACKTEST_TEXT[language];
   return (
   <div className="backtest-summary animate-fade-in">
@@ -222,8 +224,9 @@ const RunSummary: React.FC<{ data: BacktestRunResponse; language: UiLanguage }> 
 
 const BacktestPage: React.FC = () => {
   const { language, t } = useUiLanguage();
-  const text = BACKTEST_TEXT[language];
-  const phaseFilterOptions = BACKTEST_PHASE_FILTER_OPTIONS[language];
+  const featureLanguage = getFeatureLanguage(language);
+  const text = BACKTEST_TEXT[featureLanguage];
+  const phaseFilterOptions = BACKTEST_PHASE_FILTER_OPTIONS[featureLanguage];
   const actionLabels = buildDecisionActionLabelMap(t);
 
   // Set page title
@@ -512,7 +515,7 @@ const BacktestPage: React.FC = () => {
         </div>
         {runResult && (
           <div className="mt-2 max-w-4xl">
-            <RunSummary data={runResult} language={language} />
+            <RunSummary data={runResult} language={featureLanguage} />
           </div>
         )}
         {runError && (
@@ -534,7 +537,7 @@ const BacktestPage: React.FC = () => {
               <div className="backtest-spinner sm" />
             </div>
           ) : overallPerf ? (
-            <PerformanceCard metrics={overallPerf} title={text.overallPerformance} language={language} />
+            <PerformanceCard metrics={overallPerf} title={text.overallPerformance} language={featureLanguage} />
           ) : (
             <EmptyState
               title={text.noMetricsTitle}
@@ -544,7 +547,7 @@ const BacktestPage: React.FC = () => {
           )}
 
           {stockPerf && (
-            <PerformanceCard metrics={stockPerf} title={`${stockPerf.code || codeFilter}`} language={language} />
+            <PerformanceCard metrics={stockPerf} title={`${stockPerf.code || codeFilter}`} language={featureLanguage} />
           )}
         </div>
 
@@ -620,7 +623,7 @@ const BacktestPage: React.FC = () => {
                             </div>
                           </td>
                           <td className="backtest-table-cell text-secondary-text">{row.analysisDate || '--'}</td>
-                          <td className="backtest-table-cell text-secondary-text">{phaseLabel(row, language)}</td>
+                          <td className="backtest-table-cell text-secondary-text">{phaseLabel(row, featureLanguage)}</td>
                           <td className="backtest-table-cell max-w-[220px] text-foreground">
                             {predictionParts.length ? (
                               <Tooltip
@@ -643,7 +646,7 @@ const BacktestPage: React.FC = () => {
                           </td>
                           <td className="backtest-table-cell">
                             <div className="flex items-center gap-2">
-                              {actualMovementBadge(row.actualMovement, language)}
+                              {actualMovementBadge(row.actualMovement, featureLanguage)}
                               <span className={
                                 row.actualReturnPct != null
                                   ? row.actualReturnPct > 0 ? 'text-success' : row.actualReturnPct < 0 ? 'text-danger' : 'text-secondary-text'
@@ -657,12 +660,12 @@ const BacktestPage: React.FC = () => {
                             <span className="flex items-center gap-2">
                               {boolIcon(row.directionCorrect, text)}
                               <span className="text-muted-text">
-                                {row.directionExpected ? labelFromMap(row.directionExpected, BACKTEST_DIRECTION_EXPECTED_LABELS[language]) : ''}
+                                {row.directionExpected ? labelFromMap(row.directionExpected, BACKTEST_DIRECTION_EXPECTED_LABELS[featureLanguage]) : ''}
                               </span>
                             </span>
                           </td>
-                          <td className="backtest-table-cell">{outcomeBadge(row.outcome, language)}</td>
-                          <td className="backtest-table-cell">{statusBadge(row.evalStatus, language)}</td>
+                          <td className="backtest-table-cell">{outcomeBadge(row.outcome, featureLanguage)}</td>
+                          <td className="backtest-table-cell">{statusBadge(row.evalStatus, featureLanguage)}</td>
                         </tr>
                       );
                     })}

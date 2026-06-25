@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Bell, Trash2 } from 'lucide-react';
 import { Badge, Button, Card, ConfirmDialog, EmptyState, Pagination, Select } from '../common';
 import { useUiLanguage } from '../../contexts/UiLanguageContext';
-import { formatUiText, type UiLanguage } from '../../i18n/uiText';
+import { formatUiText } from '../../i18n/uiText';
 import {
   ALERT_DIRECTION_LABELS,
   ALERT_ENABLED_FILTER_OPTIONS,
@@ -14,6 +14,8 @@ import {
   ALERT_SEVERITY_LABELS,
   ALERT_TYPE_FILTER_OPTIONS,
   ALERT_TYPE_LABELS,
+  getFeatureLanguage,
+  type FeatureLanguage,
 } from '../../locales/featureText';
 import type { AlertRuleItem, AlertType, MarketRegion } from '../../types/alerts';
 import { formatDateTime } from '../../utils/format';
@@ -27,7 +29,7 @@ export interface AlertRuleBusyState {
   action: AlertRuleBusyAction;
 }
 
-function formatParameters(rule: AlertRuleItem, language: UiLanguage): string {
+function formatParameters(rule: AlertRuleItem, language: FeatureLanguage): string {
   const directionLabels = ALERT_DIRECTION_LABELS[language];
   if (rule.alertType === 'market_light_status') {
     const statuses = rule.parameters.statuses ?? [];
@@ -73,7 +75,7 @@ function isCoolingDown(rule: AlertRuleItem): boolean {
   return rule.cooldownActive === true;
 }
 
-function formatTarget(rule: AlertRuleItem, language: UiLanguage): string {
+function formatTarget(rule: AlertRuleItem, language: FeatureLanguage): string {
   if (rule.targetScope === 'market') return ALERT_MARKET_REGION_LABELS[language][rule.target as MarketRegion] ?? rule.target;
   if (rule.targetScope === 'watchlist') return 'default';
   if (rule.targetScope === 'portfolio_account' || rule.targetScope === 'portfolio_holdings') {
@@ -125,7 +127,8 @@ export const AlertRuleList: React.FC<AlertRuleListProps> = ({
   busyRule = null,
 }) => {
   const { language } = useUiLanguage();
-  const text = ALERT_LIST_TEXT[language];
+  const featureLanguage = getFeatureLanguage(language);
+  const text = ALERT_LIST_TEXT[featureLanguage];
   const [pendingDelete, setPendingDelete] = useState<AlertRuleItem | null>(null);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const isRuleBusy = (rule: AlertRuleItem) => busyRule?.id === rule.id;
@@ -145,7 +148,7 @@ export const AlertRuleList: React.FC<AlertRuleListProps> = ({
         <Select
           label={text.enabledFilter}
           value={enabledFilter}
-          options={ALERT_ENABLED_FILTER_OPTIONS[language]}
+          options={ALERT_ENABLED_FILTER_OPTIONS[featureLanguage]}
           onChange={(value) => {
             onEnabledFilterChange(value as AlertRuleEnabledFilter);
           }}
@@ -153,7 +156,7 @@ export const AlertRuleList: React.FC<AlertRuleListProps> = ({
         <Select
           label={text.alertTypeFilter}
           value={alertTypeFilter}
-          options={ALERT_TYPE_FILTER_OPTIONS[language]}
+          options={ALERT_TYPE_FILTER_OPTIONS[featureLanguage]}
           onChange={(value) => {
             onAlertTypeFilterChange(value as AlertTypeFilter);
           }}
@@ -191,18 +194,18 @@ export const AlertRuleList: React.FC<AlertRuleListProps> = ({
                     <div className="mt-1 text-xs text-muted-text">{formatUiText(text.source, { source: rule.source })}</div>
                   </td>
                   <td className="px-3 py-3 text-secondary-text">
-                    <div className="font-mono">{formatTarget(rule, language)}</div>
-                    <div className="mt-1 text-xs">{ALERT_SCOPE_LABELS[language][rule.targetScope] ?? rule.targetScope}</div>
+                    <div className="font-mono">{formatTarget(rule, featureLanguage)}</div>
+                    <div className="mt-1 text-xs">{ALERT_SCOPE_LABELS[featureLanguage][rule.targetScope] ?? rule.targetScope}</div>
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex flex-col items-start gap-1">
-                      <Badge variant="info">{ALERT_TYPE_LABELS[language][rule.alertType]}</Badge>
+                      <Badge variant="info">{ALERT_TYPE_LABELS[featureLanguage][rule.alertType]}</Badge>
                       <Badge variant={rule.severity === 'critical' ? 'danger' : rule.severity === 'warning' ? 'warning' : 'default'}>
-                        {ALERT_SEVERITY_LABELS[language][rule.severity] ?? rule.severity}
+                        {ALERT_SEVERITY_LABELS[featureLanguage][rule.severity] ?? rule.severity}
                       </Badge>
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-secondary-text">{formatParameters(rule, language)}</td>
+                  <td className="px-3 py-3 text-secondary-text">{formatParameters(rule, featureLanguage)}</td>
                   <td className="px-3 py-3">
                     <Badge variant={rule.enabled ? 'success' : 'default'}>
                       {rule.enabled ? text.enabled : text.disabled}

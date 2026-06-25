@@ -1,7 +1,13 @@
 import type { SystemConfigCategory } from '../types/systemConfig';
 import type { UiLanguage } from '../i18n/uiText';
 
-const categoryTitleMap: Record<UiLanguage, Record<SystemConfigCategory, string>> = {
+type ConfigLanguage = Exclude<UiLanguage, 'ko'>;
+
+function getConfigLanguage(locale: UiLanguage): ConfigLanguage {
+  return locale === 'ko' ? 'en' : locale;
+}
+
+const categoryTitleMap: Record<ConfigLanguage, Record<SystemConfigCategory, string>> = {
   zh: {
   base: '基础设置',
   data_source: '数据源',
@@ -24,7 +30,7 @@ const categoryTitleMap: Record<UiLanguage, Record<SystemConfigCategory, string>>
   },
 };
 
-const categoryDescriptionMap: Record<UiLanguage, Partial<Record<SystemConfigCategory, string>>> = {
+const categoryDescriptionMap: Record<ConfigLanguage, Partial<Record<SystemConfigCategory, string>>> = {
   zh: {
   base: '管理自选股与基础运行参数。',
   data_source: '管理行情数据源与优先级策略。',
@@ -534,11 +540,11 @@ export function getCategoryDescriptionZh(category: SystemConfigCategory, fallbac
 }
 
 export function getCategoryTitle(category: SystemConfigCategory, fallback?: string, locale: UiLanguage = 'zh'): string {
-  return categoryTitleMap[locale][category] || fallback || category;
+  return categoryTitleMap[getConfigLanguage(locale)][category] || fallback || category;
 }
 
 export function getCategoryDescription(category: SystemConfigCategory, fallback?: string, locale: UiLanguage = 'zh'): string {
-  return categoryDescriptionMap[locale][category] || fallback || '';
+  return categoryDescriptionMap[getConfigLanguage(locale)][category] || fallback || '';
 }
 
 export function getFieldTitleZh(key: string, fallback?: string): string {
@@ -559,7 +565,7 @@ export function getFieldOptionLabel(
   fallbackLabel?: string,
   locale: UiLanguage = 'zh',
 ): string {
-  const map = locale === 'en' ? fieldOptionLabelMapEn[key] : fieldOptionLabelMap[key];
+  const map = getConfigLanguage(locale) === 'en' ? fieldOptionLabelMapEn[key] : fieldOptionLabelMap[key];
   if (!map) {
     return fallbackLabel ?? value;
   }

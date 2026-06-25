@@ -24,6 +24,7 @@ const CALL_TYPE_LABEL_KEYS: Record<string, UiTextKey> = {
 };
 
 function getLocale(language: UiLanguage): string {
+  if (language === 'ko') return 'ko-KR';
   return language === 'en' ? 'en-US' : 'zh-CN';
 }
 

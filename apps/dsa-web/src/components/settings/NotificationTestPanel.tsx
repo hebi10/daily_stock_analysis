@@ -11,25 +11,27 @@ import type {
 } from '../../types/systemConfig';
 import { ApiErrorAlert, Badge, Button, InlineAlert, Input, Select } from '../common';
 import { SettingsSectionCard } from './SettingsSectionCard';
+import type { UiLanguage } from '../../i18n/uiText';
 
-function getChannelOptions(language: 'zh' | 'en'): Array<{ value: NotificationTestChannel; label: string }> {
+function getChannelOptions(language: UiLanguage): Array<{ value: NotificationTestChannel; label: string }> {
+  const isKo = language === 'ko';
+  const isEn = language === 'en';
   return [
-    { value: 'wechat', label: language === 'en' ? 'WeCom' : '‰ºÅ‰∏öÂæÆ‰ø°' },
-    { value: 'feishu', label: language === 'en' ? 'Feishu Webhook' : 'È£û‰π¶ Webhook' },
+    { value: 'wechat', label: isKo ? '±‚æ˜ ¿ß√™' : isEn ? 'WeCom' : '–Í?⁄∞„·' },
+    { value: 'feishu', label: isKo ? 'Feishu Webhook' : isEn ? 'Feishu Webhook' : '?? Webhook' },
     { value: 'telegram', label: 'Telegram' },
-    { value: 'email', label: language === 'en' ? 'Email' : 'ÈÇÆ‰ª∂' },
+    { value: 'email', label: isKo ? '¿Ã∏ﬁ¿œ' : isEn ? 'Email' : '?ÀÏ' },
     { value: 'pushover', label: 'Pushover' },
     { value: 'ntfy', label: 'ntfy' },
     { value: 'gotify', label: 'Gotify' },
     { value: 'pushplus', label: 'PushPlus' },
     { value: 'serverchan3', label: 'ServerChan3' },
-    { value: 'custom', label: language === 'en' ? 'Custom Webhook' : 'Ëá™ÂÆö‰πâ Webhook' },
+    { value: 'custom', label: isKo ? 'ªÁøÎ¿⁄ Webhook' : isEn ? 'Custom Webhook' : 'ÌªÔ“? Webhook' },
     { value: 'discord', label: 'Discord' },
     { value: 'slack', label: 'Slack' },
     { value: 'astrbot', label: 'AstrBot' },
   ];
 }
-
 interface NotificationTestPanelProps {
   items: SystemConfigUpdateItem[];
   maskToken: string;

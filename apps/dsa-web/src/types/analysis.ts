@@ -83,17 +83,16 @@ export interface ReportMeta {
 
 /** Sentiment label */
 export type SentimentLabel =
-  | '极度悲观'
-  | '悲观'
-  | '中性'
-  | '乐观'
-  | '极度乐观'
+  | '\uB9E4\uC6B0 \uBE44\uAD00'
+  | '\uBE44\uAD00'
+  | '\uC911\uB9BD'
+  | '\uB099\uAD00'
+  | '\uB9E4\uC6B0 \uB099\uAD00'
   | 'Very Bearish'
   | 'Bearish'
   | 'Neutral'
   | 'Bullish'
   | 'Very Bullish';
-
 export type DecisionAction = 'buy' | 'add' | 'hold' | 'reduce' | 'sell' | 'watch' | 'avoid' | 'alert';
 
 /** Report summary section */
@@ -501,13 +500,12 @@ export const getSentimentLabel = (score: number, language: ReportLanguage = 'zh'
     if (score <= 80) return 'Bullish';
     return 'Very Bullish';
   }
-  if (score <= 20) return '极度悲观';
-  if (score <= 40) return '悲观';
-  if (score <= 60) return '中性';
-  if (score <= 80) return '乐观';
-  return '极度乐观';
+  if (score <= 20) return '\uB9E4\uC6B0 \uBE44\uAD00';
+  if (score <= 40) return '\uBE44\uAD00';
+  if (score <= 60) return '\uC911\uB9BD';
+  if (score <= 80) return '\uB099\uAD00';
+  return '\uB9E4\uC6B0 \uB099\uAD00';
 };
-
 /** Get sentiment color by score */
 export const getSentimentColor = (score: number): string => {
   if (score <= 20) return '#ef4444'; // red-500

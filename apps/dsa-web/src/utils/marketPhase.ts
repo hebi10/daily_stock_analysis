@@ -8,10 +8,10 @@ import { normalizeReportLanguage } from './reportLanguage';
 
 const REQUEST_PHASE_LABELS: Record<ReportLanguage, Record<AnalysisPhase, string>> = {
   zh: {
-    auto: '自动阶段',
-    premarket: '盘前',
-    intraday: '盘中',
-    postmarket: '盘后',
+    auto: '자동',
+    premarket: '장전',
+    intraday: '장중',
+    postmarket: '장후',
   },
   en: {
     auto: 'Auto',
@@ -23,13 +23,13 @@ const REQUEST_PHASE_LABELS: Record<ReportLanguage, Record<AnalysisPhase, string>
 
 const MARKET_PHASE_LABELS: Record<ReportLanguage, Record<MarketPhaseValue, string>> = {
   zh: {
-    premarket: '盘前',
-    intraday: '盘中',
-    lunch_break: '午间休市',
-    closing_auction: '临近收盘',
-    postmarket: '盘后',
-    non_trading: '非交易日',
-    unknown: '阶段未知',
+    premarket: '장전',
+    intraday: '장중',
+    lunch_break: '점심 휴장',
+    closing_auction: '마감 동시호가',
+    postmarket: '장후',
+    non_trading: '비거래 시간',
+    unknown: '알 수 없음',
   },
   en: {
     premarket: 'Pre-market',
@@ -42,22 +42,22 @@ const MARKET_PHASE_LABELS: Record<ReportLanguage, Record<MarketPhaseValue, strin
   },
 };
 
-const TEXT = {
+const TEXT: Record<ReportLanguage, { requestPrefix: string; finalPrefix: string; partialBar: string }> = {
   zh: {
-    requestPrefix: '请求阶段',
-    finalPrefix: '市场阶段',
-    partialBar: '日线未完成',
+    requestPrefix: '요청 구간',
+    finalPrefix: '시장 구간',
+    partialBar: '부분 봉',
   },
   en: {
     requestPrefix: 'Requested phase',
     finalPrefix: 'Market phase',
     partialBar: 'Partial bar',
   },
-} as const;
+};
 
 export const getRequestedPhaseLabel = (
   phase?: AnalysisPhase | null,
-  language?: ReportLanguage | null,
+  language?: string | null,
 ): string | null => {
   if (!phase) {
     return null;
@@ -74,7 +74,7 @@ export const getRequestedPhaseLabel = (
 
 export const getMarketPhaseSummaryLabel = (
   summary?: MarketPhaseSummary | null,
-  language?: ReportLanguage | null,
+  language?: string | null,
 ): string | null => {
   if (!summary) {
     return null;
@@ -91,5 +91,5 @@ export const getMarketPhaseSummaryLabel = (
   return `${TEXT[reportLanguage].finalPrefix}: ${value}`;
 };
 
-export const getPartialBarLabel = (language?: ReportLanguage | null): string =>
+export const getPartialBarLabel = (language?: string | null): string =>
   TEXT[normalizeReportLanguage(language)].partialBar;

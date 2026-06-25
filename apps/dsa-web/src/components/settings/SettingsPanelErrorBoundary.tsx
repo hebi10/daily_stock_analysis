@@ -47,9 +47,8 @@ function getSafeErrorSummary(error: unknown) {
     ? error.message
     : typeof error === 'string'
       ? error
-      : '未知前端运行时异常';
-  const normalized = rawMessage.replace(/\s+/g, ' ').trim() || '未知前端运行时异常';
-  const sanitized = sanitizeUrlLikeText(normalized)
+      : '\uC54C \uC218 \uC5C6\uB294 \uD504\uB7F0\uD2B8\uC5D4\uB4DC \uC624\uB958';
+  const normalized = rawMessage.replace(/\s+/g, ' ').trim() || '\uC54C \uC218 \uC5C6\uB294 \uD504\uB7F0\uD2B8\uC5D4\uB4DC \uC624\uB958';  const sanitized = sanitizeUrlLikeText(normalized)
     .replace(/\bBearer\s+[A-Za-z0-9._~+/=-]{8,}/gi, 'Bearer [redacted]')
     .replace(/\b(sk-[A-Za-z0-9_-]{8,})\b/g, '[redacted-key]')
     .replace(
@@ -133,11 +132,10 @@ export const SettingsPanelErrorBoundary = (props: SettingsPanelErrorBoundaryProp
         errorSummaryPrefix: 'Error summary: ',
       }
     : {
-        loadFailedSuffix: '加载失败',
-        runtimeErrorMessage: '该设置区域发生前端运行时异常，页面其他设置仍可继续使用。',
-        defaultDiagnosticHint: '请补充 release 版本、运行环境和触发入口，便于定位问题。',
-        errorSummaryPrefix: '错误摘要：',
+        loadFailedSuffix: ' \uB85C\uB4DC \uC2E4\uD328',
+        runtimeErrorMessage: '\uC774 \uC124\uC815 \uC601\uC5ED\uC5D0\uC11C \uD504\uB7F0\uD2B8\uC5D4\uB4DC \uB7F0\uD0C0\uC784 \uC624\uB958\uAC00 \uBC1C\uC0DD\uD588\uC2B5\uB2C8\uB2E4. \uB2E4\uB978 \uC124\uC815\uC740 \uACC4\uC18D \uC0AC\uC6A9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.',
+        defaultDiagnosticHint: '\uBB38\uC81C \uC9C4\uB2E8\uC744 \uC704\uD574 \uB9B4\uB9AC\uC2A4 \uBC84\uC804, \uC2E4\uD589 \uD658\uACBD, \uC624\uB958\uAC00 \uBC1C\uC0DD\uD55C \uACBD\uB85C\uB97C \uD655\uC778\uD558\uC138\uC694.',
+        errorSummaryPrefix: '\uC624\uB958 \uC694\uC57D: ',
       };
-
   return <SettingsPanelErrorBoundaryImpl {...props} labels={labels} />;
 };

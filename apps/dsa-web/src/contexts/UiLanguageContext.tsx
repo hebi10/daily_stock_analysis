@@ -1,6 +1,6 @@
 import type React from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { formatUiText, UI_TEXT, type UiLanguage, type UiTextKey, type UiTextParams } from '../i18n/uiText';
+import { formatUiText, getUiText, type UiLanguage, type UiTextKey, type UiTextParams } from '../i18n/uiText';
 import { getRuntimeInitialLanguage, getUiLanguageStorage, persistUiLanguage } from '../utils/uiLanguage';
 
 type UiLanguageContextValue = {
@@ -10,9 +10,9 @@ type UiLanguageContextValue = {
 };
 
 const fallbackContext: UiLanguageContextValue = {
-  language: 'zh',
+  language: 'ko',
   setLanguage: () => undefined,
-  t: (key, params) => formatUiText(UI_TEXT.zh[key], params),
+  t: (key, params) => formatUiText(getUiText('ko', key), params),
 };
 
 const UiLanguageContext = createContext<UiLanguageContextValue | null>(null);
@@ -27,14 +27,14 @@ export const UiLanguageProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.documentElement.lang = language === 'en' ? 'en' : 'zh-CN';
+      document.documentElement.lang = language === 'ko' ? 'ko-KR' : language === 'en' ? 'en' : 'zh-CN';
     }
   }, [language]);
 
   const value = useMemo<UiLanguageContextValue>(() => ({
     language,
     setLanguage,
-    t: (key, params) => formatUiText(UI_TEXT[language][key], params),
+    t: (key, params) => formatUiText(getUiText(language, key), params),
   }), [language, setLanguage]);
 
   return (

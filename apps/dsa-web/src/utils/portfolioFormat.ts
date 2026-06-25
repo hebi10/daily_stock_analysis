@@ -22,7 +22,7 @@ export function getTodayIso(): string {
 
 export function formatMoney(value: number | undefined | null, currency = 'CNY'): string {
   if (value == null || Number.isNaN(value)) return '--';
-  return `${currency} ${Number(value).toLocaleString('zh-CN', {
+  return `${currency} ${Number(value).toLocaleString('ko-KR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
@@ -54,33 +54,33 @@ export function formatPositionMoney(value: number, row: PortfolioPositionItem): 
 }
 
 export function getPositionPriceLabel(row: PortfolioPositionItem): string {
-  if (!hasPositionPrice(row)) return '缺价';
+  if (!hasPositionPrice(row)) return '가격 없음';
   if (row.priceSource === 'realtime_quote') {
-    return row.priceProvider ? `实时价 · ${row.priceProvider}` : '实时价';
+    return row.priceProvider ? `실시간 시세 · ${row.priceProvider}` : '실시간 시세';
   }
   if (row.priceSource === 'history_close') {
-    return row.priceStale && row.priceDate ? `收盘价 · ${row.priceDate}` : '收盘价';
+    return row.priceStale && row.priceDate ? `종가 · ${row.priceDate}` : '종가';
   }
-  return row.priceSource || '未知来源';
+  return row.priceSource || '알 수 없는 출처';
 }
 
 export function formatSideLabel(value: PortfolioSide): string {
-  return value === 'buy' ? '买入' : '卖出';
+  return value === 'buy' ? '매수' : '매도';
 }
 
 export function formatCashDirectionLabel(value: PortfolioCashDirection): string {
-  return value === 'in' ? '流入' : '流出';
+  return value === 'in' ? '입금' : '출금';
 }
 
 export function formatCorporateActionLabel(value: PortfolioCorporateActionType): string {
-  return value === 'cash_dividend' ? '现金分红' : '拆并股调整';
+  return value === 'cash_dividend' ? '현금 배당' : '분할 조정';
 }
 
 export function formatBrokerLabel(value: string, displayName?: string): string {
-  if (displayName && displayName.trim()) return `${value}（${displayName.trim()}）`;
-  if (value === 'huatai') return 'huatai（华泰）';
-  if (value === 'citic') return 'citic（中信）';
-  if (value === 'cmb') return 'cmb（招商）';
+  if (displayName && displayName.trim()) return `${value}(${displayName.trim()})`;
+  if (value === 'huatai') return 'huatai(화타이)';
+  if (value === 'citic') return 'citic(중신)';
+  if (value === 'cmb') return 'cmb(초상)';
   return value;
 }
 
@@ -88,35 +88,35 @@ export function buildFxRefreshFeedback(data: PortfolioFxRefreshResponse): FxRefr
   if (data.refreshEnabled === false) {
     return {
       tone: 'neutral',
-      text: '汇率在线刷新已被禁用。',
+      text: '환율 자동 새로고침이 비활성화되어 있습니다.',
     };
   }
 
   if (data.pairCount === 0) {
     return {
       tone: 'neutral',
-      text: '当前范围无可刷新的汇率对。',
+      text: '현재 범위에 새로고침할 환율 쌍이 없습니다.',
     };
   }
 
   if (data.updatedCount > 0 && data.staleCount === 0 && data.errorCount === 0) {
     return {
       tone: 'success',
-      text: `汇率已刷新，共更新 ${data.updatedCount} 对。`,
+      text: `환율을 업데이트했습니다. 성공 ${data.updatedCount}건`,
     };
   }
 
-  const summary = `更新 ${data.updatedCount} 对，仍过期 ${data.staleCount} 对，失败 ${data.errorCount} 对。`;
+  const summary = `업데이트 ${data.updatedCount}건, 만료 ${data.staleCount}건, 실패 ${data.errorCount}건`;
   if (data.staleCount > 0) {
     return {
       tone: 'warning',
-      text: `已尝试刷新，但仍有部分货币对使用 stale/fallback 汇率。${summary}`,
+      text: `일부 환율이 만료되었거나 fallback 값을 사용했습니다. ${summary}`,
     };
   }
 
   return {
     tone: 'warning',
-    text: `在线刷新未完全成功。${summary}`,
+    text: `환율 새로고침이 일부만 완료되었습니다. ${summary}`,
   };
 }
 

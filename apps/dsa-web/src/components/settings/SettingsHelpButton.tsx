@@ -109,10 +109,11 @@ export const SettingsHelpButton: React.FC<SettingsHelpButtonProps> = ({
   const examples = providedExamples ?? help?.examples ?? schema?.examples ?? [];
   const docs = providedDocs?.length ? providedDocs : schema?.docs?.length ? schema.docs : help?.docs ?? [];
   const showFieldKey = help?.showFieldKey ?? true;
-  const helpButtonLabel = language === 'en'
-    ? `View ${title} configuration help`
-    : `查看 ${title} 配置说明`;
-
+  const helpButtonLabel = language === 'ko'
+    ? `${title} \uC124\uC815 \uB3C4\uC6C0\uB9D0 \uBCF4\uAE30`
+    : language === 'en'
+      ? `View ${title} configuration help`
+      : `${title} \uC124\uC815 \uB3C4\uC6C0\uB9D0 \uBCF4\uAE30`;
   useEffect(() => {
     if (!open) {
       return;
