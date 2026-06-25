@@ -1,6 +1,6 @@
-# 对 changelog 使用 union 合并策略
-# 多个并发 PR 向 [Unreleased] 末尾追加条目时，Git 直接取两边所有行而不产生冲突标记。
-# 适用于 append-only 的 changelog 文件。
+# changelog에는 union 병합 전략을 사용합니다.
+# 여러 PR이 동시에 [Unreleased] 끝에 항목을 추가할 때 Git은 충돌 표시 없이 양쪽 라인을 모두 취합니다.
+# append-only changelog 파일에 적합합니다.
 docs/CHANGELOG.md merge=union
 
 # Documentation image/design assets are binary. Keep GitHub review diffs from
@@ -20,23 +20,23 @@ docs/assets/**/*.jpeg binary
 docs/assets/**/*.png binary
 docs/assets/**/*.psd binary
 
-# === 强制 LF 的文件类型（内核/系统解释器直接消费） ===
-# Shell 脚本（entrypoint.sh、任何 .sh）
+# === LF를 강제할 파일 유형(커널/시스템 인터프리터가 직접 소비) ===
+# Shell 스크립트(entrypoint.sh, 모든 .sh)
 *.sh text eol=lf
 *.bash text eol=lf
 
-# Dockerfile（包括多阶段或变体）
+# Dockerfile(멀티 스테이지 또는 변형 포함)
 Dockerfile text eol=lf
 Dockerfile.* text eol=lf
 
 # Makefile
 Makefile text eol=lf
 
-# 环境变量文件（如果被 shell 直接 source 使用）
+# 환경변수 파일(shell에서 직접 source할 수 있는 경우)
 .env text eol=lf
 
-# === 新增：二进制文件（禁止 Git 修改换行/编码） ===
-# 证书、密钥等（如果有）
+# === 추가: 바이너리 파일(Git이 줄바꿈/인코딩을 수정하지 않도록 금지) ===
+# 인증서, 키 등(있는 경우)
 *.pem binary
 *.crt binary
 *.key binary

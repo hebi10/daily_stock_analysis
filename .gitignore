@@ -1,16 +1,16 @@
-# 环境变量文件（包含敏感信息，禁止提交）
+# 환경변수 파일(민감 정보 포함, 커밋 금지)
 .env
 .env.*
 *.env
 *.env.local
 .env.*.local
 
-# 测试文件（可能包含敏感配置）
-# 仅忽略仓库根目录下的临时 test_*.py 脚本；tests/ 目录下的单元测试需要纳入版本控制。
+# 테스트 파일(민감 설정이 들어갈 수 있음)
+# 저장소 루트의 임시 test_*.py 스크립트만 제외합니다. tests/ 디렉터리의 단위 테스트는 버전 관리에 포함해야 합니다.
 /test_*.py
 /test.sh
 
-# 本地评审与高级路由配置（可能包含敏感信息或临时分析产物）
+# 로컬 리뷰와 고급 라우팅 설정(민감 정보나 임시 분석 산출물이 들어갈 수 있음)
 /.codex
 /review.md
 /litellm_config.yaml
@@ -38,7 +38,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# 虚拟环境
+# 가상환경
 venv/
 ENV/
 env/
@@ -52,7 +52,7 @@ env/
 *~
 .cursorrules
 
-# 数据和日志
+# 데이터와 로그
 /data/
 /.llm_usage_hmac_secret
 **/.llm_usage_hmac_secret
@@ -62,11 +62,11 @@ reports/
 *.sqlite
 *.sqlite3
 
-# 系统文件
+# 시스템 파일
 .DS_Store
 Thumbs.db
 
-# 测试
+# 테스트
 .pytest_cache/
 .coverage
 htmlcov/
