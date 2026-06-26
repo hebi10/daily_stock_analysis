@@ -18,6 +18,7 @@ from typing import Optional, Dict, Any, List, Tuple, TYPE_CHECKING
 from src.config import get_config, resolve_news_window_days
 from src.data.stock_index_loader import resolve_index_stock_code
 from src.report_language import (
+    get_localized_text,
     get_bias_status_emoji,
     get_localized_stock_name,
     get_report_labels,
@@ -894,14 +895,14 @@ class HistoryService:
         report_time = record.created_at.strftime("%H:%M:%S") if record.created_at else datetime.now().strftime("%H:%M:%S")
         report_language = normalize_report_language(getattr(result, "report_language", "zh"))
         labels = get_report_labels(report_language)
-        analysis_date_label = "Analysis Date" if report_language == "en" else "分析日期"
-        report_time_label = "Report Time" if report_language == "en" else "报告生成时间"
-        reason_label = "Rationale" if report_language == "en" else "操作理由"
-        risk_warning_label = "Risk Warning" if report_language == "en" else "风险提示"
-        technical_heading = "Technicals" if report_language == "en" else "技术面"
-        ma_label = "Moving Averages" if report_language == "en" else "均线"
-        volume_analysis_label = "Volume" if report_language == "en" else "量能"
-        news_heading = "News Flow" if report_language == "en" else "消息面"
+        analysis_date_label = get_localized_text(report_language, zh="分析日期", en="Analysis Date", ko="분석일")
+        report_time_label = get_localized_text(report_language, zh="报告生成时间", en="Report Time", ko="리포트 생성 시간")
+        reason_label = get_localized_text(report_language, zh="操作理由", en="Rationale", ko="판단 근거")
+        risk_warning_label = get_localized_text(report_language, zh="风险提示", en="Risk Warning", ko="위험 알림")
+        technical_heading = get_localized_text(report_language, zh="技术面", en="Technicals", ko="기술적 분석")
+        ma_label = get_localized_text(report_language, zh="均线", en="Moving Averages", ko="이동평균")
+        volume_analysis_label = get_localized_text(report_language, zh="量能", en="Volume", ko="거래량")
+        news_heading = get_localized_text(report_language, zh="消息面", en="News Flow", ko="뉴스 흐름")
 
         # Escape markdown special characters in stock name
         name_escaped = self._escape_md(

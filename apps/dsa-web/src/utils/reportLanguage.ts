@@ -2,7 +2,8 @@ import type { ReportLanguage } from '../types/analysis';
 
 export const normalizeReportLanguage = (value?: string | null): ReportLanguage => {
   if (value === 'en') return 'en';
-  return 'zh';
+  if (value === 'ko') return 'ko';
+  return 'ko';
 };
 
 const reportTextKo = {
@@ -101,6 +102,7 @@ const reportTextEn: typeof reportTextKo = {
 
 const REPORT_TEXT: Record<ReportLanguage, typeof reportTextKo> = {
   zh: reportTextKo,
+  ko: reportTextKo,
   en: reportTextEn,
 };
 

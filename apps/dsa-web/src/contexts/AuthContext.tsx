@@ -28,14 +28,19 @@ function extractLoginError(err: unknown): ParsedApiError {
   const parsed = getParsedApiError(err);
   if (parsed.status === 429) {
     return createParsedApiError({
-      title: '登录尝试过于频繁',
-      message: '尝试次数过多，请稍后再试。',
+      title: '로그인 시도가 너무 많습니다',
+      message: '잠시 후 다시 시도해 주세요.',
       rawMessage: parsed.rawMessage,
       status: parsed.status,
       category: parsed.category,
     });
   }
   return parsed;
+}
+
+function canSkipAuthStatusInDev(parsed: ParsedApiError): boolean {
+  return import.meta.env.MODE === 'development'
+    && (parsed.category === 'local_connection_failed' || parsed.status === 500);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -61,7 +66,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         useStockPoolStore.getState().resetDashboardState();
       }
     } catch (err) {
-      setLoadError(getParsedApiError(err));
+      const parsed = getParsedApiError(err);
+      if (canSkipAuthStatusInDev(parsed)) {
+        setAuthEnabled(false);
+        setLoggedIn(false);
+        setPasswordSet(false);
+        setPasswordChangeable(false);
+        setSetupState('no_password');
+        return;
+      }
+      setLoadError(parsed);
       setAuthEnabled(false);
       setLoggedIn(false);
       setPasswordSet(false);

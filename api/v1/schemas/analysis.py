@@ -80,10 +80,10 @@ class AnalyzeRequest(BaseModel):
         True,
         description="是否发送推送通知（Telegram/企业微信等）"
     )
-    report_language: Optional[Literal["zh", "en"]] = Field(
+    report_language: Optional[Literal["zh", "en", "ko"]] = Field(
         None,
         validation_alias=AliasChoices("report_language", "reportLanguage"),
-        description="本次分析报告输出语言；未传时使用全局 REPORT_LANGUAGE",
+        description="이번 분석 리포트 출력 언어입니다. 전달하지 않으면 전역 REPORT_LANGUAGE를 사용합니다.",
     )
     skills: Optional[List[str]] = Field(
         None,
@@ -103,7 +103,7 @@ class AnalyzeRequest(BaseModel):
             "original_query": "茅台",
             "selection_source": "autocomplete",
             "notify": True,
-            "report_language": "zh",
+            "report_language": "ko",
             "skills": ["bull_trend"]
         }
     })
@@ -116,10 +116,10 @@ class MarketReviewRequest(BaseModel):
         True,
         description="是否在大盘复盘完成后发送推送通知",
     )
-    report_language: Optional[Literal["zh", "en"]] = Field(
+    report_language: Optional[Literal["zh", "en", "ko"]] = Field(
         None,
         validation_alias=AliasChoices("report_language", "reportLanguage"),
-        description="本次大盘复盘报告输出语言；未传时使用全局 REPORT_LANGUAGE",
+        description="이번 시장 복기 리포트 출력 언어입니다. 전달하지 않으면 전역 REPORT_LANGUAGE를 사용합니다.",
     )
 
 

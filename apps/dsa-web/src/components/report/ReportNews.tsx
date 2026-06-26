@@ -16,8 +16,12 @@ interface ReportNewsProps {
 
 const NEWS_SOURCE_TEXT = {
   zh: {
-    sourceLabel: '相关资讯/后续检索',
-    sourceHint: '来源：报告页补充资讯；是否用于分析以输入数据块为准。',
+    sourceLabel: '관련 뉴스/후속 검색',
+    sourceHint: '출처: 리포트 페이지 보충 뉴스입니다. 분석에 사용됐는지는 입력 데이터 블록을 기준으로 확인하세요.',
+  },
+  ko: {
+    sourceLabel: '관련 뉴스/후속 검색',
+    sourceHint: '출처: 리포트 페이지 보충 뉴스입니다. 분석에 사용됐는지는 입력 데이터 블록을 기준으로 확인하세요.',
   },
   en: {
     sourceLabel: 'Related news / follow-up retrieval',

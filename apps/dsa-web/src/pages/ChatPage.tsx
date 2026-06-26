@@ -190,7 +190,7 @@ const ChatPage: React.FC = () => {
   const pendingScrollBehaviorRef = useRef<ScrollBehavior>('auto');
 
   // Get localized text (default to Chinese)
-  const text = getReportText('zh');
+  const text = getReportText('ko');
 
   // Cleanup timers on unmount
   useEffect(() => {

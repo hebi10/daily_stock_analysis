@@ -25,11 +25,11 @@ export const UiLanguageToggle: React.FC<UiLanguageToggleProps> = ({
   labelClassName,
 }) => {
   const { language, setLanguage, t } = useUiLanguage();
-  const nextLanguage = language === 'ko' ? 'en' : language === 'en' ? 'zh' : 'ko';
+  const nextLanguage = language === 'en' ? 'ko' : 'en';
   const isNavVariant = variant === 'nav';
   const isRailVariant = variant === 'rail';
-  const shortLabel = language === 'ko' ? 'KO' : language === 'en' ? t('language.short.en') : t('language.short.zh');
-  const label = language === 'ko' ? t('language.current') : language === 'en' ? t('language.english') : t('language.uiLanguage');
+  const shortLabel = language === 'en' ? t('language.short.en') : 'KO';
+  const label = language === 'en' ? t('language.english') : t('language.current');
 
   return (
     <div className={cn('relative', isRailVariant ? 'w-full' : '', wrapperClassName)}>

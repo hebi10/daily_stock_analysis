@@ -38,6 +38,7 @@ from src.analyzer import (
 )
 from src.notification import NotificationService, NotificationChannel
 from src.report_language import (
+    get_localized_text,
     infer_decision_type_from_advice,
     localize_confidence_level,
     localize_operation_advice,
@@ -1642,8 +1643,8 @@ class StockAnalysisPipeline:
             code=code,
             name=stock_name,
             sentiment_score=50,
-            trend_prediction="Unknown" if report_language == "en" else "未知",
-            operation_advice="Watch" if report_language == "en" else "观望",
+            trend_prediction=get_localized_text(report_language, zh="未知", en="Unknown", ko="알 수 없음"),
+            operation_advice=get_localized_text(report_language, zh="观望", en="Watch", ko="관망"),
             confidence_level=localize_confidence_level("medium", report_language),
             report_language=report_language,
             success=agent_result.success,
@@ -1723,7 +1724,12 @@ class StockAnalysisPipeline:
                 allow_dict=True,
                 expect_text=True,
             ):
-                result.operation_advice = str(raw_advice) if raw_advice else ("Watch" if report_language == "en" else "观望")
+                result.operation_advice = str(raw_advice) if raw_advice else get_localized_text(
+                    report_language,
+                    zh="观望",
+                    en="Watch",
+                    ko="관망",
+                )
             else:
                 signal_label = self._trend_signal_fallback(trend_result, report_language)
                 if signal_label:
@@ -1799,7 +1805,12 @@ class StockAnalysisPipeline:
                 )
                 self._backfill_agent_dashboard_fields(result, trend_result, report_language)
             if not result.error_message:
-                result.error_message = "Agent failed to generate a valid decision dashboard" if report_language == "en" else "Agent 未能生成有效的决策仪表盘"
+                result.error_message = get_localized_text(
+                    report_language,
+                    zh="Agent 未能生成有效的决策仪表盘",
+                    en="Agent failed to generate a valid decision dashboard",
+                    ko="Agent가 유효한 의사결정 대시보드를 생성하지 못했습니다",
+                )
 
         explicit_action = dash.get("action") if isinstance(dash, dict) else None
         if explicit_action is None and isinstance(getattr(result, "dashboard", None), dict):
@@ -1969,6 +1980,8 @@ class StockAnalysisPipeline:
         if trend and advice:
             if report_language == "en":
                 return f"Trend view: {trend}; action advice: {advice}."
+            if report_language == "ko":
+                return f"추세 판단: {trend}; 투자 의견: {advice}."
             return f"趋势结论：{trend}；操作建议：{advice}。"
         return ""
 
@@ -2005,7 +2018,12 @@ class StockAnalysisPipeline:
             core["one_sentence"] = result.analysis_summary or self._summary_fallback_from_result(
                 result,
                 report_language,
-            ) or ("Analysis pending" if report_language == "en" else "分析待补充")
+            ) or get_localized_text(
+                report_language,
+                zh="分析待补充",
+                en="Analysis pending",
+                ko="분석 보완 필요",
+            )
 
         intelligence = dashboard.get("intelligence")
         if not isinstance(intelligence, dict):
@@ -2043,7 +2061,7 @@ class StockAnalysisPipeline:
         levels = getattr(trend_result, "support_levels", None) if trend_result else None
         if levels:
             return levels[0]
-        return "To be completed" if report_language == "en" else "待补充"
+        return get_localized_text(report_language, zh="待补充", en="To be completed", ko="보완 필요")
 
     @staticmethod
     def _apply_trend_fallback(
@@ -2053,7 +2071,7 @@ class StockAnalysisPipeline:
     ) -> None:
         if trend_result is None:
             result.sentiment_score = 50
-            result.operation_advice = "Watch" if report_language == "en" else "观望"
+            result.operation_advice = get_localized_text(report_language, zh="观望", en="Watch", ko="관망")
             return
 
         score = getattr(trend_result, "signal_score", None)
@@ -2075,7 +2093,7 @@ class StockAnalysisPipeline:
         if signal_label:
             result.operation_advice = signal_label
         else:
-            result.operation_advice = "Watch" if report_language == "en" else "观望"
+            result.operation_advice = get_localized_text(report_language, zh="观望", en="Watch", ko="관망")
 
         from src.agent.protocols import normalize_decision_signal
 

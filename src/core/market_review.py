@@ -19,7 +19,7 @@ import uuid
 from src.config import get_config
 from src.notification import NotificationService
 from src.market_analyzer import MarketAnalyzer
-from src.report_language import normalize_report_language
+from src.report_language import get_localized_text, normalize_report_language
 from src.search_service import SearchService
 from src.analyzer import AnalysisResult, GeminiAnalyzer
 from src.llm.generation_backend import GenerationError
@@ -101,6 +101,15 @@ def _get_market_review_text(language: str) -> dict[str, str]:
             "us_title": "# US Market Recap",
             "hk_title": "# HK Market Recap",
             "separator": "> Next market recap follows",
+        }
+    if normalized == "ko":
+        return {
+            "root_title": "# 🎯 시장 복기",
+            "push_title": "🎯 시장 복기",
+            "cn_title": "# A주 시장 복기",
+            "us_title": "# 미국 시장 복기",
+            "hk_title": "# 홍콩 시장 복기",
+            "separator": "> 다음 시장 복기가 이어집니다",
         }
     return {
         "root_title": "# 🎯 大盘复盘",
@@ -519,12 +528,16 @@ def _persist_market_review_history(
     try:
         from src.storage import DatabaseManager
 
-        report_language = normalize_report_language(getattr(config, "report_language", "zh"))
+        report_language = normalize_report_language(getattr(config, "report_language", "ko"))
         summary = _summarize_market_review(review_report, report_language)
         if report_language == "en":
             stock_name = "Market Review"
             operation_advice = "View review"
             trend_prediction = "Market review"
+        elif report_language == "ko":
+            stock_name = "시장 복기"
+            operation_advice = "복기 확인"
+            trend_prediction = "시장 복기"
         else:
             stock_name = "大盘复盘"
             operation_advice = "查看复盘"
@@ -628,7 +641,7 @@ def _build_market_review_context_overview(
         metadata["trigger_source"] = diagnostic_snapshot.get("trigger_source") or metadata["trigger_source"]
         metadata["scope"] = diagnostic_snapshot.get("scope") or metadata["scope"]
 
-    label = "Market review" if report_language == "en" else "大盘复盘"
+    label = get_localized_text(report_language, zh="大盘复盘", en="Market review", ko="시장 복기")
     return {
         "pack_version": "market_review/1.0",
         "created_at": datetime.now().isoformat(),
@@ -665,4 +678,9 @@ def _summarize_market_review(review_report: str, report_language: str) -> str:
         text = line.strip().lstrip("#").strip()
         if text and not text.startswith("---") and not text.startswith(">"):
             return text[:200]
-    return "Market review report generated." if report_language == "en" else "大盘复盘报告已生成。"
+    return get_localized_text(
+        report_language,
+        zh="大盘复盘报告已生成。",
+        en="Market review report generated.",
+        ko="시장 복기 리포트가 생성되었습니다.",
+    )

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
+from src.report_language import normalize_report_language
 from src.utils.sanitize import sanitize_decision_signal_payload, sanitize_decision_signal_text
 
 
@@ -46,7 +47,7 @@ def format_decision_signal_excerpt(summary: Any, report_language: str = "zh") ->
 
     if not isinstance(summary, dict) or not summary:
         return ""
-    language = "en" if str(report_language or "").lower().startswith("en") else "zh"
+    language = normalize_report_language(report_language)
     labels = {
         "zh": {
             "heading": "AI 决策信号",
@@ -56,6 +57,15 @@ def format_decision_signal_excerpt(summary: Any, report_language: str = "zh") ->
             "watch_conditions": "观察条件",
             "risk_summary": "风险",
             "source_report_id": "报告",
+        },
+        "ko": {
+            "heading": "AI 의사결정 신호",
+            "action": "동작",
+            "horizon": "기간",
+            "reason": "이유",
+            "watch_conditions": "관찰 조건",
+            "risk_summary": "위험",
+            "source_report_id": "리포트",
         },
         "en": {
             "heading": "AI decision signal",

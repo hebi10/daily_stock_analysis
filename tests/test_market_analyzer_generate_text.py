@@ -1928,6 +1928,68 @@ class TestMarketAnalyzerBypassFix:
         assert "### 1. Market Summary" not in result
         assert "US Market Recap" not in result
 
+    def test_generate_template_review_uses_korean_shell_when_report_language_is_ko(self):
+        from src.market_analyzer import MarketOverview, MarketIndex
+
+        ma = self._make_market_analyzer_with_mock_generate_text(return_value=None)
+        ma.config.report_language = "ko"
+        overview = MarketOverview(
+            date="2026-03-05",
+            indices=[
+                MarketIndex(
+                    code="000001",
+                    name="상하이종합지수",
+                    current=3300.0,
+                    change=5.0,
+                    change_pct=0.15,
+                    amount=145000000000.0,
+                )
+            ],
+            up_count=3200,
+            down_count=1800,
+            flat_count=100,
+            limit_up_count=88,
+            limit_down_count=5,
+            total_amount=14567.0,
+        )
+
+        result = ma.generate_market_review(overview, [])
+
+        assert "## 2026-03-05 A주 시장 복기" in result
+        assert "### 1. 장세 개요" in result
+        assert "시장 신호" in result
+        assert "大盘复盘" not in result
+        assert "盘面总览" not in result
+
+    def test_build_review_prompt_uses_korean_shell_when_report_language_is_ko(self):
+        from src.market_analyzer import MarketOverview, MarketIndex
+
+        ma = self._make_market_analyzer_with_mock_generate_text(return_value="review")
+        ma.config.report_language = "ko"
+        overview = MarketOverview(
+            date="2026-03-05",
+            indices=[
+                MarketIndex(
+                    code="000001",
+                    name="상하이종합지수",
+                    current=3300.0,
+                    change=5.0,
+                    change_pct=0.15,
+                )
+            ],
+            up_count=3200,
+            down_count=1800,
+            flat_count=100,
+            total_amount=14567.0,
+        )
+
+        prompt = ma._build_review_prompt(overview, [])
+
+        assert "# 오늘 시장 데이터" in prompt
+        assert "## 2026-03-05 A주 시장 복기" in prompt
+        assert "### 1. 장세 개요" in prompt
+        assert "大盘复盘" not in prompt
+
     def test_inject_data_into_review_matches_english_headings(self):
         from src.market_analyzer import MarketOverview, MarketIndex
 
@@ -2048,6 +2110,47 @@ Sector text.
         assert "AI算力板块走强" not in result
         assert "新闻。" in result
         assert "算力产业链延续活跃" not in result
+
+    def test_inject_data_into_review_matches_korean_headings(self):
+        from src.market_analyzer import MarketOverview, MarketIndex
+
+        ma = self._make_market_analyzer_with_mock_generate_text(return_value="review")
+        ma.config.report_language = "ko"
+        overview = MarketOverview(
+            date="2026-03-05",
+            indices=[
+                MarketIndex(
+                    code="000001",
+                    name="상하이종합지수",
+                    current=3300.0,
+                    change=12.0,
+                    change_pct=0.36,
+                    amount=145000000000.0,
+                )
+            ],
+            up_count=3200,
+            down_count=1800,
+            flat_count=100,
+            limit_up_count=88,
+            limit_down_count=5,
+            total_amount=14567.0,
+        )
+        review = """## 2026-03-05 A주 시장 복기
+
+### 1. 장세 개요
+요약
+
+### 2. 지수 구조
+지수
+"""
+
+        result = ma._inject_data_into_review(review, overview)
+
+        assert "- **시장 신호**:" in result
+        assert "- **신호 근거**:" in result
+        assert "- **운영 제안**:" in result
+        assert "| 상승/하락/보합 | 3200 / 1800 / 100 |" in result
+        assert "盘面信号" not in result
 
     def test_market_review_payload_sections_skip_top_report_title(self):
         from src.market_analyzer import MarketAnalyzer
@@ -2395,7 +2498,7 @@ Sector text.
         import ast
         import pathlib
 
-        src = pathlib.Path("src/market_analyzer.py").read_text()
+        src = pathlib.Path("src/market_analyzer.py").read_text(encoding="utf-8")
         tree = ast.parse(src)
         forbidden = {
             "_model", "_router", "_use_openai", "_use_anthropic",  # historical

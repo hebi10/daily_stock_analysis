@@ -442,6 +442,13 @@ def _build_language_section(report_language: str, *, chat_mode: bool = False) ->
 - Reply in English.
 - If you output JSON, keep the keys unchanged and write every human-readable value in English.
 """
+        if normalized == "ko":
+            return """
+## 출력 언어
+
+- 한국어로 답변하세요.
+- JSON을 출력할 경우 키 이름은 그대로 유지하고, 사용자에게 보이는 모든 텍스트 값은 한국어로 작성하세요.
+"""
         return """
 ## 输出语言
 
@@ -457,6 +464,15 @@ def _build_language_section(report_language: str, *, chat_mode: bool = False) ->
 - `decision_type` must remain `buy|hold|sell`.
 - All human-readable JSON values must be written in English.
 - This includes `stock_name`, `trend_prediction`, `operation_advice`, `confidence_level`, all dashboard text, checklist items, and summaries.
+"""
+    if normalized == "ko":
+        return """
+## 출력 언어
+
+- 모든 JSON 키 이름은 그대로 유지하세요.
+- `decision_type`은 반드시 `buy|hold|sell` 중 하나로 유지하세요.
+- 사용자에게 보이는 모든 JSON 값은 한국어로 작성하세요.
+- 여기에는 `stock_name`, `trend_prediction`, `operation_advice`, `confidence_level`, 모든 dashboard 문구, 체크리스트 항목, 요약이 포함됩니다.
 """
 
     return """
@@ -516,7 +532,7 @@ class AgentExecutor:
         default_skill_policy_section = ""
         if self.default_skill_policy:
             default_skill_policy_section = f"\n{self.default_skill_policy}\n"
-        report_language = normalize_report_language((context or {}).get("report_language", "zh"))
+        report_language = normalize_report_language((context or {}).get("report_language", "ko"))
         stock_code = (context or {}).get("stock_code", "")
         market_role = get_market_role(stock_code, report_language)
         market_guidelines = get_market_guidelines(stock_code, report_language)
@@ -568,7 +584,7 @@ class AgentExecutor:
         default_skill_policy_section = ""
         if self.default_skill_policy:
             default_skill_policy_section = f"\n{self.default_skill_policy}\n"
-        report_language = normalize_report_language((context or {}).get("report_language", "zh"))
+        report_language = normalize_report_language((context or {}).get("report_language", "ko"))
         stock_code = (context or {}).get("stock_code", "")
         market_role = get_market_role(stock_code, report_language)
         market_guidelines = get_market_guidelines(stock_code, report_language)
@@ -793,13 +809,15 @@ class AgentExecutor:
         """Build the initial user message."""
         parts = [task]
         if context:
-            report_language = normalize_report_language(context.get("report_language", "zh"))
+            report_language = normalize_report_language(context.get("report_language", "ko"))
             if context.get("stock_code"):
                 parts.append(f"\n股票代码: {context['stock_code']}")
             if context.get("report_type"):
                 parts.append(f"报告类型: {context['report_type']}")
             if report_language == "en":
                 parts.append("输出语言: English（所有 JSON 键名保持不变，所有面向用户的文本值使用英文）")
+            elif report_language == "ko":
+                parts.append("출력 언어: 한국어(JSON 키 이름은 그대로 유지하고, 사용자에게 보이는 모든 텍스트 값은 한국어)")
             else:
                 parts.append("输出语言: 中文（所有 JSON 键名保持不变，所有面向用户的文本值使用中文）")
 

@@ -37,12 +37,20 @@ const QUALITY_STYLE = {
 
 const BLOCK_LABELS: Record<ReportLanguage, Record<string, string>> = {
   zh: {
-    quote: '行情',
-    daily_bars: '日线',
-    technical: '技术',
-    news: '新闻',
-    fundamentals: '基本面',
-    chip: '筹码',
+    quote: '시세',
+    daily_bars: '일봉',
+    technical: '기술 지표',
+    news: '뉴스',
+    fundamentals: '기본면',
+    chip: '칩',
+  },
+  ko: {
+    quote: '시세',
+    daily_bars: '일봉',
+    technical: '기술 지표',
+    news: '뉴스',
+    fundamentals: '기본면',
+    chip: '칩',
   },
   en: {
     quote: 'quote',
@@ -56,33 +64,63 @@ const BLOCK_LABELS: Record<ReportLanguage, Record<string, string>> = {
 
 const TEXT = {
   zh: {
-    eyebrow: '数据上下文',
-    title: '输入数据块',
-    counts: '状态计数',
-    source: '来源',
-    warnings: '告警',
-    missingReasons: '缺失原因',
-    inputScope: '本次分析输入',
-    evidenceScope: '仅代表进入本次 LLM 的输入，不等同于数据源运行成功',
-    qualityScore: '质量分',
-    limitations: '数据限制',
-    newsResultCount: '新闻结果数',
-    triggerSource: '触发来源',
+    eyebrow: '데이터 컨텍스트',
+    title: '입력 데이터 블록',
+    counts: '상태 집계',
+    source: '출처',
+    warnings: '경고',
+    missingReasons: '누락 사유',
+    inputScope: '이번 분석 입력',
+    evidenceScope: '이번 LLM 실행에 포함된 입력이며, 데이터 소스 실행 성공을 뜻하지는 않습니다',
+    qualityScore: '품질 점수',
+    limitations: '데이터 제한',
+    newsResultCount: '뉴스 결과 수',
+    triggerSource: '트리거 출처',
     qualityLevel: {
-      good: '良好',
-      usable: '可用',
-      limited: '受限',
-      poor: '较差',
+      good: '양호',
+      usable: '사용 가능',
+      limited: '제한적',
+      poor: '낮음',
     },
     status: {
-      available: '可用',
-      missing: '缺失',
-      not_supported: '不支持',
-      fallback: '降级',
-      stale: '过期',
-      estimated: '估算',
-      partial: '部分可用',
-      fetch_failed: '抓取失败',
+      available: '사용 가능',
+      missing: '누락',
+      not_supported: '미지원',
+      fallback: '대체',
+      stale: '만료',
+      estimated: '추정',
+      partial: '부분 사용 가능',
+      fetch_failed: '가져오기 실패',
+    },
+  },
+  ko: {
+    eyebrow: '데이터 컨텍스트',
+    title: '입력 데이터 블록',
+    counts: '상태 집계',
+    source: '출처',
+    warnings: '경고',
+    missingReasons: '누락 사유',
+    inputScope: '이번 분석 입력',
+    evidenceScope: '이번 LLM 실행에 포함된 입력이며, 데이터 소스 실행 성공을 뜻하지는 않습니다',
+    qualityScore: '품질 점수',
+    limitations: '데이터 제한',
+    newsResultCount: '뉴스 결과 수',
+    triggerSource: '트리거 출처',
+    qualityLevel: {
+      good: '양호',
+      usable: '사용 가능',
+      limited: '제한적',
+      poor: '낮음',
+    },
+    status: {
+      available: '사용 가능',
+      missing: '누락',
+      not_supported: '미지원',
+      fallback: '대체',
+      stale: '만료',
+      estimated: '추정',
+      partial: '부분 사용 가능',
+      fetch_failed: '가져오기 실패',
     },
   },
   en: {
@@ -119,14 +157,24 @@ const TEXT = {
 
 const MISSING_REASON_LABELS: Record<ReportLanguage, Record<string, string>> = {
   zh: {
-    daily_bars_missing: '未进入分析输入',
-    news_context_missing: '未进入分析输入',
-    realtime_quote_missing: '未进入分析输入',
-    trend_result_missing: '未进入分析输入',
-    fundamental_context_missing: '未进入分析输入',
-    chip_distribution_missing: '未进入分析输入',
-    today_missing: '今日数据未进入分析输入',
-    yesterday_missing: '昨日数据未进入分析输入',
+    daily_bars_missing: '분석 입력에 포함되지 않음',
+    news_context_missing: '분석 입력에 포함되지 않음',
+    realtime_quote_missing: '분석 입력에 포함되지 않음',
+    trend_result_missing: '분석 입력에 포함되지 않음',
+    fundamental_context_missing: '분석 입력에 포함되지 않음',
+    chip_distribution_missing: '분석 입력에 포함되지 않음',
+    today_missing: '오늘 데이터가 분석 입력에 포함되지 않음',
+    yesterday_missing: '어제 데이터가 분석 입력에 포함되지 않음',
+  },
+  ko: {
+    daily_bars_missing: '분석 입력에 포함되지 않음',
+    news_context_missing: '분석 입력에 포함되지 않음',
+    realtime_quote_missing: '분석 입력에 포함되지 않음',
+    trend_result_missing: '분석 입력에 포함되지 않음',
+    fundamental_context_missing: '분석 입력에 포함되지 않음',
+    chip_distribution_missing: '분석 입력에 포함되지 않음',
+    today_missing: '오늘 데이터가 분석 입력에 포함되지 않음',
+    yesterday_missing: '어제 데이터가 분석 입력에 포함되지 않음',
   },
   en: {
     daily_bars_missing: 'Not included in analysis input',
@@ -182,7 +230,7 @@ const formatLimitation = (
 
   const label = BLOCK_LABELS[language][key] || key;
   const statusLabel = (text.status as Record<string, string>)[status] || status;
-  return language === 'zh' ? `${label}：${statusLabel}` : `${label}: ${statusLabel}`;
+  return language === 'en' ? `${label}: ${statusLabel}` : `${label}：${statusLabel}`;
 };
 
 const formatMissingReason = (reason: string, language: ReportLanguage): string => {
